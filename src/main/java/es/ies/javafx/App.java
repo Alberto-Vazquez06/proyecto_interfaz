@@ -227,7 +227,7 @@ public class App extends Application {
                         "El equipo de recepción no arranca.",
                         "Abierta",
                         "Alta",
-                        "Marta"
+                        "Alberto"
                 ),
                 new Incidencia(
                         2,
@@ -243,7 +243,7 @@ public class App extends Application {
                         "Hay papel atascado en la bandeja principal.",
                         "En proceso",
                         "Media",
-                        "Lucía"
+                        "Adrián"
                 ),
                 new Incidencia(
                         4,
@@ -251,7 +251,7 @@ public class App extends Application {
                         "Instalar la última versión en el equipo.",
                         "Cerrada",
                         "Baja",
-                        "Diego"
+                        "Iván"
                 ),
                 new Incidencia(
                         5,
@@ -259,7 +259,7 @@ public class App extends Application {
                         "Conexión restablecida y comprobada.",
                         "Cerrada",
                         "Alta",
-                        "Marta"
+                        "Benson"
                 )
         );
     }
