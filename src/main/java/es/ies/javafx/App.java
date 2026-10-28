@@ -17,29 +17,33 @@ import java.util.Locale;
 
 public class App extends Application {
     
-    private final ObservableList<Incidencia> incidencias =
-            FXCollections.observableArrayList();
-
+    private final ObservableList<Incidencia> incidencias = FXCollections.observableArrayList(); // Lista observable de incidencias
+    
+    // Lista filtrada de incidencias        
     private FilteredList<Incidencia> incidenciasFiltradas;
     private TableView<Incidencia> tabla;
     private TextField cajaBuscar;
     private ComboBox<String> filtroEstado;
 
+    // Etiquetas para mostrar el resumen de incidencias
     private Label totalLabel;
     private Label abiertasLabel;
     private Label procesoLabel;
     private Label cerradasLabel;
 
+    // Variable para llevar un seguimiento del siguiente ID disponible
     private int siguienteId = 6;
 
+    // Método principal de la aplicación
     @Override
     public void start(Stage escenario) {
 
+        // Cargar datos de ejemplo en la lista de incidencias
         cargarDatosDeEjemplo();
 
-        incidenciasFiltradas =
-                new FilteredList<>(incidencias, incidencia -> true);
+        incidenciasFiltradas = new FilteredList<>(incidencias, incidencia -> true);
 
+        // Crear la interfaz de usuario
         Label titulo = new Label("GESTOR DE INCIDENCIAS");
         titulo.setStyle(
                 "-fx-background-color: black;" +
@@ -49,6 +53,7 @@ public class App extends Application {
                 "-fx-background-radius: 35;"
         );
 
+        // Crear la caja de búsqueda y los botones de búsqueda y añadir
         cajaBuscar = new TextField();
         cajaBuscar.setPromptText("Buscar incidencia...");
         cajaBuscar.setPrefWidth(500);
@@ -57,20 +62,22 @@ public class App extends Application {
                 "-fx-border-width: 2;"
         );
 
+        // Crear los botones de búsqueda y añadir
         Button botonBuscar = crearBoton("Buscar");
         botonBuscar.setOnAction(e -> aplicarFiltros());
 
+        // Crear el botón de añadir incidencia
         Button botonAnadir = crearBoton("Añadir");
-        botonAnadir.setOnAction(e ->
-                abrirFormulario(escenario, null)
-        );
+        botonAnadir.setOnAction(e -> abrirFormulario(escenario, null));
 
-        HBox filaBusqueda = new HBox(
-                25, cajaBuscar, botonBuscar, botonAnadir
-        );
+        // Crear la fila de búsqueda con la caja de búsqueda y los botones
+        HBox filaBusqueda = new HBox(25, cajaBuscar, botonBuscar, botonAnadir);
+
+        // Establecer el alineamiento de la fila de búsqueda y permitir que la caja de búsqueda se expanda
         filaBusqueda.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(cajaBuscar, Priority.ALWAYS);
 
+        // Crear el combo box para filtrar por estado
         filtroEstado = new ComboBox<>();
         filtroEstado.getItems().addAll(
                 "Todos los estados",
@@ -78,53 +85,39 @@ public class App extends Application {
                 "En proceso",
                 "Cerrada"
         );
-        filtroEstado.setValue("Todos los estados");
-        filtroEstado.setPrefWidth(170);
-        filtroEstado.setOnAction(e -> aplicarFiltros());
+        filtroEstado.setValue("Todos los estados"); // Establecer el valor predeterminado del combo box
+        filtroEstado.setPrefWidth(170); // Establecer el ancho preferido del combo box
+        filtroEstado.setOnAction(e -> aplicarFiltros()); // Aplicar filtros cuando se seleccione un estado
 
+        // Crear la fila de filtro con el combo box y establecer su alineamiento
         HBox filaFiltro = new HBox(filtroEstado);
         filaFiltro.setAlignment(Pos.CENTER_RIGHT);
 
+        // Crear la tabla para mostrar las incidencias
         tabla = new TableView<>();
-        tabla.setItems(incidenciasFiltradas);
-        tabla.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
-        );
-        tabla.setPlaceholder(
-                new Label("No hay incidencias que mostrar")
-        );
+        tabla.setItems(incidenciasFiltradas); // Establecer la lista filtrada como elementos de la tabla
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN ); // Establecer la política de redimensionamiento de columnas de la tabla
+        tabla.setPlaceholder( new Label("No hay incidencias que mostrar")); // Establecer el texto que se muestra cuando no hay incidencias
 
-        TableColumn<Incidencia, Integer> columnaId =
-                new TableColumn<>("ID");
-        columnaId.setCellValueFactory(
-                new PropertyValueFactory<>("id")
-        );
+        // Crear las columnas de la tabla y establecer sus propiedades
+        TableColumn<Incidencia, Integer> columnaId = new TableColumn<>("ID"); 
+        columnaId.setCellValueFactory(new PropertyValueFactory<>("id")); // Establecer la propiedad de la columna para mostrar el ID de la incidencia
         columnaId.setMaxWidth(75);
 
-        TableColumn<Incidencia, String> columnaTitulo =
-                new TableColumn<>("Título");
-        columnaTitulo.setCellValueFactory(
-                new PropertyValueFactory<>("titulo")
-        );
+        // Crear las columnas de la tabla y establecer sus propiedades
+        TableColumn<Incidencia, String> columnaTitulo = new TableColumn<>("Título");
+        columnaTitulo.setCellValueFactory( new PropertyValueFactory<>("titulo"));
 
-        TableColumn<Incidencia, String> columnaEstado =
-                new TableColumn<>("Estado");
-        columnaEstado.setCellValueFactory(
-                new PropertyValueFactory<>("estado")
-        );
+        TableColumn<Incidencia, String> columnaEstado =  new TableColumn<>("Estado");
+        columnaEstado.setCellValueFactory( new PropertyValueFactory<>("estado") );
 
-        TableColumn<Incidencia, String> columnaPrioridad =
-                new TableColumn<>("Prioridad");
-        columnaPrioridad.setCellValueFactory(
-                new PropertyValueFactory<>("prioridad")
-        );
+        TableColumn<Incidencia, String> columnaPrioridad = new TableColumn<>("Prioridad");
+        columnaPrioridad.setCellValueFactory(new PropertyValueFactory<>("prioridad"));
 
-        TableColumn<Incidencia, String> columnaResponsable =
-                new TableColumn<>("Responsable");
-        columnaResponsable.setCellValueFactory(
-                new PropertyValueFactory<>("responsable")
-        );
+        TableColumn<Incidencia, String> columnaResponsable = new TableColumn<>("Responsable");
+        columnaResponsable.setCellValueFactory( new PropertyValueFactory<>("responsable"));
 
+        // Agregar las columnas a la tabla
         tabla.getColumns().addAll(
                 columnaId,
                 columnaTitulo,
@@ -133,24 +126,26 @@ public class App extends Application {
                 columnaResponsable
         );
 
+        // Crear el botón de detalle y establecer su acción al hacer clic
         Button botonDetalle = crearBoton("Detalle");
 
+        // Establecer la acción del botón de detalle para abrir el formulario con los detalles de la incidencia seleccionada
         botonDetalle.setOnAction(e -> {
-            Incidencia seleccionada =
-                    tabla.getSelectionModel().getSelectedItem();
+            Incidencia seleccionada = tabla.getSelectionModel().getSelectedItem();
 
             if (seleccionada == null) {
-                mostrarAviso(
-                        "Selecciona una incidencia de la tabla."
-                );
+                mostrarAviso("Selecciona una incidencia de la tabla.");
+
             } else {
                 abrirFormulario(escenario, seleccionada);
             }
         });
 
+        // Crear la fila de detalle con el botón de detalle y establecer su alineamiento
         HBox filaDetalle = new HBox(botonDetalle);
         filaDetalle.setAlignment(Pos.CENTER);
 
+        // Crear el contenedor principal de la aplicación con un VBox y establecer su contenido y estilo
         VBox contenido = new VBox(
                 20,
                 titulo,
@@ -160,17 +155,19 @@ public class App extends Application {
                 filaDetalle
         );
 
-        contenido.setPadding(
-                new Insets(26, 42, 20, 42)
-        );
+        // Establecer el padding del contenedor principal
+        contenido.setPadding(new Insets(26, 42, 20, 42));
 
+        // Establecer que la tabla ocupe todo el espacio disponible en el VBox
         VBox.setVgrow(tabla, Priority.ALWAYS);
 
+        // Crear las etiquetas para mostrar el resumen de incidencias
         totalLabel = new Label();
         abiertasLabel = new Label();
         procesoLabel = new Label();
         cerradasLabel = new Label();
 
+        // Crear el contenedor HBox para el resumen de incidencias y establecer su contenido y estilo
         HBox resumen = new HBox(
                 35,
                 totalLabel,
@@ -178,7 +175,6 @@ public class App extends Application {
                 procesoLabel,
                 cerradasLabel
         );
-
         resumen.setAlignment(Pos.CENTER);
         resumen.setPadding(new Insets(18));
         resumen.setStyle(
@@ -187,14 +183,18 @@ public class App extends Application {
                 "-fx-background-color: white;"
         );
 
+        // Crear el contenedor BorderPane para la aplicación y establecer su contenido
         BorderPane raiz = new BorderPane();
         raiz.setCenter(contenido);
         raiz.setBottom(resumen);
 
+        // Actualizar el resumen de incidencias al iniciar la aplicación
         actualizarResumen();
 
+        // Crear la escena principal de la aplicación con el contenedor BorderPane y establecer su tamaño
         Scene escena = new Scene(raiz, 1100, 650);
 
+        // Configurar el escenario principal de la aplicación con el título, tamaño mínimo y escena
         escenario.setTitle("Gestor de incidencias");
         escenario.setMinWidth(850);
         escenario.setMinHeight(560);
@@ -202,6 +202,8 @@ public class App extends Application {
         escenario.show();
     }
 
+    // ======MÉTODOS AUXILIARES======
+    // Método para crear un botón con estilo personalizado
     private Button crearBoton(String texto) {
         Button boton = new Button(texto);
 
@@ -216,6 +218,7 @@ public class App extends Application {
         return boton;
     }
 
+    // Método para cargar datos de ejemplo en la lista de incidencias (Estas incidencias son un ejemplo)
     private void cargarDatosDeEjemplo() {
         incidencias.addAll(
                 new Incidencia(
@@ -261,10 +264,9 @@ public class App extends Application {
         );
     }
 
+    // Método para aplicar los filtros de búsqueda y estado a la lista de incidencias
     private void aplicarFiltros() {
-        String texto = cajaBuscar.getText()
-                .trim()
-                .toLowerCase(Locale.ROOT);
+        String texto = cajaBuscar.getText().trim().toLowerCase(Locale.ROOT);
 
         String estado = filtroEstado.getValue();
 
@@ -299,10 +301,9 @@ public class App extends Application {
         });
     }
 
-    private void abrirFormulario(
-            Stage propietario,
-            Incidencia incidenciaExistente
-    ) {
+    // Método para abrir el formulario de añadir o editar una incidencia
+    private void abrirFormulario( Stage propietario, Incidencia incidenciaExistente) {
+
         boolean esNueva = incidenciaExistente == null;
 
         Stage ventana = new Stage();
@@ -315,13 +316,9 @@ public class App extends Application {
                         : "Detalles de la incidencia"
         );
 
-        TextField campoTitulo = new TextField(
-                esNueva ? "" : incidenciaExistente.getTitulo()
-        );
+        TextField campoTitulo = new TextField(esNueva ? "" : incidenciaExistente.getTitulo());
 
-        TextArea campoDescripcion = new TextArea(
-                esNueva ? "" : incidenciaExistente.getDescripcion()
-        );
+        TextArea campoDescripcion = new TextArea(esNueva ? "" : incidenciaExistente.getDescripcion());
         campoDescripcion.setWrapText(true);
         campoDescripcion.setPrefRowCount(4);
 
@@ -331,9 +328,7 @@ public class App extends Application {
                 "En proceso",
                 "Cerrada"
         );
-        campoEstado.setValue(
-                esNueva ? "Abierta" : incidenciaExistente.getEstado()
-        );
+        campoEstado.setValue(esNueva ? "Abierta" : incidenciaExistente.getEstado());
 
         ComboBox<String> campoPrioridad = new ComboBox<>();
         campoPrioridad.getItems().addAll(
@@ -342,13 +337,9 @@ public class App extends Application {
                 "Alta",
                 "Crítica"
         );
-        campoPrioridad.setValue(
-                esNueva ? "Media" : incidenciaExistente.getPrioridad()
-        );
+        campoPrioridad.setValue(esNueva ? "Media" : incidenciaExistente.getPrioridad());
 
-        TextField campoResponsable = new TextField(
-                esNueva ? "" : incidenciaExistente.getResponsable()
-        );
+        TextField campoResponsable = new TextField(esNueva ? "" : incidenciaExistente.getResponsable());
 
         GridPane formulario = new GridPane();
         formulario.setHgap(12);
@@ -388,17 +379,13 @@ public class App extends Application {
         );
 
         botones.setAlignment(Pos.CENTER_RIGHT);
-        botones.setPadding(
-                new Insets(0, 22, 20, 22)
-        );
+        botones.setPadding(new Insets(0, 22, 20, 22));
 
         botonGuardar.setOnAction(e -> {
 
             String titulo = campoTitulo.getText().trim();
-            String descripcion =
-                    campoDescripcion.getText().trim();
-            String responsable =
-                    campoResponsable.getText().trim();
+            String descripcion = campoDescripcion.getText().trim();
+            String responsable = campoResponsable.getText().trim();
 
             if (titulo.isEmpty()) {
                 mostrarAviso("El título es obligatorio.");
@@ -444,44 +431,32 @@ public class App extends Application {
         ventana.showAndWait();
     }
 
+    // Método para actualizar el resumen de incidencias en las etiquetas
     private void actualizarResumen() {
-        long abiertas = incidencias.stream()
-                .filter(i -> i.getEstado().equals("Abierta"))
-                .count();
+        long abiertas = incidencias.stream().filter(i -> i.getEstado().equals("Abierta")).count();
 
-        long enProceso = incidencias.stream()
-                .filter(i -> i.getEstado().equals("En proceso"))
-                .count();
+        long enProceso = incidencias.stream().filter(i -> i.getEstado().equals("En proceso")).count();
 
-        long cerradas = incidencias.stream()
-                .filter(i -> i.getEstado().equals("Cerrada"))
-                .count();
+        long cerradas = incidencias.stream() .filter(i -> i.getEstado().equals("Cerrada")).count();
 
-        totalLabel.setText(
-                "Número de incidencias: " + incidencias.size()
-        );
+        totalLabel.setText("Número de incidencias: " + incidencias.size());
 
-        abiertasLabel.setText(
-                "Incidencias abiertas: " + abiertas
-        );
+        abiertasLabel.setText("Incidencias abiertas: " + abiertas);
 
-        procesoLabel.setText(
-                "Incidencias en proceso: " + enProceso
-        );
+        procesoLabel.setText("Incidencias en proceso: " + enProceso);
 
-        cerradasLabel.setText(
-                "Incidencias cerradas: " + cerradas
-        );
+        cerradasLabel.setText("Incidencias cerradas: " + cerradas);
     }
 
+    // Método para mostrar un aviso al usuario con un mensaje específico
     private void mostrarAviso(String mensaje) {
-        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-        alerta.setTitle("Gestor de incidencias");
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);// Crear una alerta de tipo información
+        alerta.setTitle("Gestor de incidencias");// Establecer el título de la alerta
+        alerta.setHeaderText(null);// Establecer el encabezado de la alerta como nulo (sin encabezado)
+        alerta.setContentText(mensaje);// Establecer el contenido de la alerta con el mensaje proporcionado
+        alerta.showAndWait();// Mostrar la alerta y esperar a que el usuario la cierre
     }
-
+// Método principal de la aplicación
     public static void main(String[] args) {
         launch(args);
     }

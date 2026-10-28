@@ -8,6 +8,7 @@ import javafx.beans.property.IntegerProperty;
 
 public class Incidencia {
 
+    // Atributos de la clase Incidencia
     private final IntegerProperty id;
     private final StringProperty titulo;
     private final StringProperty descripcion;
@@ -15,6 +16,7 @@ public class Incidencia {
     private final StringProperty prioridad;
     private final StringProperty responsable;
 
+    // Constructor de la clase Incidencia   
     public Incidencia(int id, String titulo, String descripcion,
                       String estado, String prioridad,
                       String responsable) {
@@ -27,6 +29,7 @@ public class Incidencia {
         this.responsable = new SimpleStringProperty(responsable);
     }
 
+    // Getters y setters para los atributos de la clase Incidencia
     public int getId() {
         return id.get();
     }
